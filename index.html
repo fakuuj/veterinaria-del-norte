@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Socios · Veterinaria del Norte</title>
+<meta name="description" content="Sistema de socios, cobranza a domicilio y recibos — Veterinaria del Norte (demo).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --bg:#f3f6f1; --surface:#ffffff; --surface-2:#eef1eb; --ink:#182019; --muted:#63706a;
+    --line:#e1e6dd; --primary:#2f7d5b; --primary-dark:#245f46; --primary-soft:rgba(47,125,91,.10);
+    --good:#2f7d5b; --good-soft:rgba(47,125,91,.12);
+    --warn:#b26f16; --warn-soft:rgba(178,111,22,.13);
+    --info:#2c6c9c; --info-soft:rgba(44,108,156,.12);
+    --danger:#bb463a; --accent:#c8892a;
+    --shadow:0 1px 2px rgba(24,32,25,.05), 0 6px 20px rgba(24,32,25,.06);
+    --radius:14px; color-scheme:light;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+    --bg:#0f1512; --surface:#161d19; --surface-2:#1e2621; --ink:#e9eee9; --muted:#98a49d;
+    --line:#2a332d; --primary:#54b488; --primary-dark:#3f9a70; --primary-soft:rgba(84,180,136,.14);
+    --good:#54b488; --good-soft:rgba(84,180,136,.15);
+    --warn:#d7a244; --warn-soft:rgba(215,162,68,.16);
+    --info:#69aede; --info-soft:rgba(105,174,222,.16);
+    --danger:#e0695c; --accent:#d7a244;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 22px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0f1512; --surface:#161d19; --surface-2:#1e2621; --ink:#e9eee9; --muted:#98a49d;
+    --line:#2a332d; --primary:#54b488; --primary-dark:#3f9a70; --primary-soft:rgba(84,180,136,.14);
+    --good:#54b488; --good-soft:rgba(84,180,136,.15);
+    --warn:#d7a244; --warn-soft:rgba(215,162,68,.16);
+    --info:#69aede; --info-soft:rgba(105,174,222,.16);
+    --danger:#e0695c; --accent:#d7a244;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 22px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+  body{background:var(--bg);color:var(--ink);
+    font-family:'Manrope',system-ui,-apple-system,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces','Georgia',serif;margin:0;line-height:1.15;text-wrap:balance}
+  button{font-family:inherit}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--surface) 92%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar{max-width:960px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .logo{width:40px;height:40px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--primary),var(--primary-dark));color:#fff;
+    font-family:'Fraunces',serif;font-weight:700;font-size:19px;box-shadow:var(--shadow)}
+  .brand-txt h1{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .demo-pill{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--accent);background:var(--warn-soft);padding:2px 7px;border-radius:6px}
+  .brand-txt p{margin:1px 0 0;font-size:12px;color:var(--muted)}
+  .mes{margin-left:auto;text-align:right;font-size:12px;color:var(--muted)}
+  .mes b{display:block;font-size:14px;color:var(--ink);font-weight:600}
+
+  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 56px}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;box-shadow:var(--shadow)}
+  .tile .lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+  .tile .val{font-family:'Fraunces',serif;font-weight:600;font-size:27px;margin-top:3px}
+  .tile .val.sm{font-size:22px}
+  .tile.info .val{color:var(--info)} .tile.warn .val{color:var(--warn)} .tile.good .val{color:var(--good)}
+
+  .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:11px}
+  .tab{border:0;background:transparent;color:var(--muted);font-size:13.5px;font-weight:600;
+    padding:8px 14px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .tab .count{font-size:11px;font-weight:700;background:var(--info-soft);color:var(--info);padding:1px 7px;border-radius:20px}
+  .btn{border:0;border-radius:10px;font-weight:600;font-size:13.5px;cursor:pointer;
+    padding:9px 15px;display:inline-flex;align-items:center;gap:7px;transition:.15s;white-space:nowrap}
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:var(--shadow)}
+  .btn-primary:hover{background:var(--primary-dark)}
+  .btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+  .add-btn{margin-left:auto}
+
+  .section-head{display:flex;align-items:baseline;gap:10px;margin:2px 2px 12px;flex-wrap:wrap}
+  .section-head h2{font-size:19px;font-weight:600}
+  .section-head p{margin:0;font-size:12.5px;color:var(--muted)}
+
+  .prep{background:var(--info-soft);border:1px solid color-mix(in srgb,var(--info) 30%,transparent);
+    border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .prep .t{flex:1;min-width:180px;font-size:13px}
+  .prep .t b{display:block;font-size:13.5px}
+
+  .list{display:flex;flex-direction:column;gap:9px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:13px 15px;box-shadow:var(--shadow);display:grid;grid-template-columns:38px 1fr auto;gap:13px;align-items:center}
+  .num{width:38px;height:38px;border-radius:10px;background:var(--primary-soft);color:var(--primary);
+    display:grid;place-items:center;font-weight:700;font-size:13px}
+  .who{min-width:0}
+  .who .name{font-weight:600;font-size:15px}
+  .who .meta{font-size:12.5px;color:var(--muted);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .dot{width:3px;height:3px;border-radius:50%;background:var(--muted);opacity:.5;flex-shrink:0}
+  .cat-chip{font-size:11px;font-weight:600;color:var(--primary);background:var(--primary-soft);padding:1px 8px;border-radius:20px}
+  .right{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
+  .amount{font-family:'Fraunces',serif;font-weight:600;font-size:17px}
+  .actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .pill.ok{background:var(--good-soft);color:var(--good)}
+  .pill.calle{background:var(--info-soft);color:var(--info)}
+  .pill.sin{background:var(--warn-soft);color:var(--warn)}
+  .mini{border:1px solid var(--line);background:var(--surface);color:var(--ink);
+    font-size:12px;font-weight:600;padding:6px 11px;border-radius:8px;cursor:pointer;transition:.15s}
+  .mini:hover{border-color:var(--primary);color:var(--primary)}
+  .mini.solid{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .mini.solid:hover{background:var(--primary-dark)}
+  .empty{text-align:center;padding:38px 16px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius)}
+  .empty .big{font-family:'Fraunces',serif;font-size:19px;color:var(--ink);margin-bottom:4px}
+
+  .overlay{position:fixed;inset:0;background:rgba(12,18,14,.55);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px;z-index:40}
+  .modal{background:var(--surface);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:460px;max-height:92vh;overflow-y:auto}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 6px}
+  .modal-head h3{font-size:20px;font-weight:600}
+  .x{border:0;background:var(--surface-2);color:var(--muted);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:16px;line-height:1}
+  .x:hover{color:var(--ink)}
+  form{padding:8px 20px 20px;display:flex;flex-direction:column;gap:13px}
+  label{display:block}
+  label span{font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:5px}
+  input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
+  input:focus,select:focus{outline:2px solid var(--primary-soft);border-color:var(--primary)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+
+  .recibo{padding:20px}
+  .recibo-note{font-size:11.5px;color:var(--muted);text-align:center;margin:4px 0 12px;line-height:1.4}
+  .copias{display:flex;flex-direction:column;gap:14px}
+  .recibo-doc{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+  .copia-tag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:0 2px 5px}
+  .recibo-top{background:linear-gradient(150deg,var(--primary),var(--primary-dark));color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .recibo-top .rt-brand{font-family:'Fraunces',serif;font-weight:700;font-size:16px}
+  .recibo-top .rt-sub{font-size:11px;opacity:.85;margin-top:2px}
+  .recibo-top .rt-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.85;text-align:right}
+  .recibo-top .rt-nro{font-family:'Fraunces',serif;font-weight:700;font-size:17px;text-align:right}
+  .recibo-body{padding:14px 18px;display:flex;flex-direction:column;gap:9px}
+  .rb-row{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+  .rb-row .k{color:var(--muted)} .rb-row .v{font-weight:600;text-align:right}
+  .rb-total{margin-top:3px;padding-top:10px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:baseline}
+  .rb-total .k{font-size:12.5px;color:var(--muted);font-weight:600}
+  .rb-total .v{font-family:'Fraunces',serif;font-weight:700;font-size:23px;color:var(--primary)}
+  .rb-firma{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:10.5px;color:var(--muted)}
+  .rb-firma .line{border-top:1px solid var(--line);padding-top:5px;text-align:center}
+  .recibo-foot{background:var(--surface-2);padding:9px 18px;font-size:10.5px;color:var(--muted);text-align:center}
+  .recibo-actions{display:flex;gap:9px;padding:0 20px 20px}
+  .recibo-actions .btn{flex:1;justify-content:center}
+
+  footer{max-width:960px;margin:0 auto;padding:8px 16px 20px;text-align:center;font-size:12px;color:var(--muted)}
+  footer a{color:var(--primary);font-weight:600;text-decoration:none}
+
+  @media (max-width:640px){
+    .tiles{grid-template-columns:1fr 1fr}.tile .val{font-size:24px}
+    .card{grid-template-columns:34px 1fr;grid-template-areas:"n who" "r r"}
+    .num{grid-area:n}.who{grid-area:who}
+    .right{grid-area:r;flex-direction:row;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:10px;margin-top:2px}
+    .mes{margin-left:0;text-align:left;width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* Impresión: solo el recibo (original + copia) */
+  @media print{
+    header,.wrap,footer{display:none!important}
+    .overlay{position:static!important;background:none!important;backdrop-filter:none!important;padding:0!important;display:block!important}
+    .modal{box-shadow:none!important;max-width:none!important;max-height:none!important;border-radius:0!important}
+    .recibo-note,.recibo-actions{display:none!important}
+    .recibo-doc{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <div class="logo">N</div>
+      <div class="brand-txt">
+        <h1>Veterinaria del Norte <span class="demo-pill">Demo</span></h1>
+        <p>Sistema de socios y cobranza</p>
+      </div>
+    </div>
+    <div class="mes">Período<b id="mesLabel">—</b></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="tiles">
+    <div class="tile"><div class="lbl">Socios</div><div class="val tnum" id="tSocios">0</div></div>
+    <div class="tile warn"><div class="lbl">Sin emitir</div><div class="val tnum" id="tSin">0</div></div>
+    <div class="tile info"><div class="lbl">Con el cobrador</div><div class="val tnum" id="tCalle">0</div></div>
+    <div class="tile good"><div class="lbl">Cobrado</div><div class="val sm tnum" id="tRecaudado">$0</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" id="tab-socios" onclick="setTab('socios')">Socios</button>
+      <button class="tab" role="tab" aria-selected="false" id="tab-cobranza" onclick="setTab('cobranza')">
+        Ruta del cobrador <span class="count" id="cobranzaCount">0</span>
+      </button>
+    </div>
+    <button class="btn btn-primary add-btn" onclick="openNuevo()">+ Nuevo socio</button>
+  </div>
+
+  <section id="view-socios">
+    <div class="section-head">
+      <h2>Padrón de socios</h2>
+      <p>Emitís el recibo, el cobrador lo lleva, y le das de baja cuando el socio paga.</p>
+    </div>
+    <div class="list" id="listSocios"></div>
+  </section>
+
+  <section id="view-cobranza" hidden>
+    <div class="section-head">
+      <h2>Ruta del cobrador</h2>
+      <p>Emití los recibos, salen a domicilio, y das de baja los que pagan.</p>
+    </div>
+    <div id="prepZone"></div>
+    <div class="list" id="listCobranza"></div>
+  </section>
+</div>
+
+<footer>Muestra de demostración · datos de ejemplo · desarrollada por <a href="https://fstudio.uy" target="_blank" rel="noopener">fstudio.uy</a></footer>
+<div id="modalRoot"></div>
+
+<script>
+var CATEGORIAS = [
+  {id:'basica',  nombre:'Cuota Básica',   monto:390},
+  {id:'plena',   nombre:'Cuota Plena',    monto:520},
+  {id:'familiar',nombre:'Cuota Familiar', monto:640}
+];
+function cat(id){ return CATEGORIAS.find(function(c){return c.id===id}) || CATEGORIAS[0]; }
+
+var now = new Date();
+var MES_LABEL = now.toLocaleDateString('es-UY',{month:'long',year:'numeric'});
+MES_LABEL = MES_LABEL.charAt(0).toUpperCase()+MES_LABEL.slice(1);
+var HOY = now.toISOString().slice(0,10);
+
+/* estado del pago del mes: 'pendiente' (sin emitir) | 'emitido' (con el cobrador) | 'acreditado' */
+var SEED = {
+  reciboSeq: 1049,
+  socios:[
+    {id:1, nombre:'María Fernández',  dir:'Guayabos 1234',      tel:'099 111 222', catId:'plena',    p:{estado:'acreditado', nro:1042, emit:'2026-09-02', acred:'2026-09-05'}},
+    {id:2, nombre:'Susana Methol',    dir:'Zorrilla 455',       tel:'098 555 666', catId:'familiar', p:{estado:'acreditado', nro:1043, emit:'2026-09-02', acred:'2026-09-06'}},
+    {id:3, nombre:'Lucía Bentancor',  dir:'Montecaseros 990',   tel:'091 222 111', catId:'basica',   p:{estado:'acreditado', nro:1044, emit:'2026-09-02', acred:'2026-09-06'}},
+    {id:4, nombre:'Gabriela Sosa',    dir:'Sarandí 733',        tel:'098 121 212', catId:'plena',    p:{estado:'acreditado', nro:1045, emit:'2026-09-02', acred:'2026-09-08'}},
+    {id:5, nombre:'Néstor Aldabe',    dir:'Florida 342',        tel:'099 343 434', catId:'basica',   p:{estado:'emitido',    nro:1046, emit:'2026-09-09'}},
+    {id:6, nombre:'Ana Melgar',       dir:'Colón 615',          tel:'099 787 878', catId:'plena',    p:{estado:'emitido',    nro:1047, emit:'2026-09-09'}},
+    {id:7, nombre:'Jorge Píriz',      dir:'Treinta y Tres 876', tel:'099 333 444', catId:'basica',   p:{estado:'emitido',    nro:1048, emit:'2026-09-09'}},
+    {id:8, nombre:'Ramón Cáceres',    dir:'18 de Julio 2201',   tel:'099 777 888', catId:'plena',    p:{estado:'pendiente'}},
+    {id:9, nombre:'Daniel Olivera',   dir:'Leandro Gómez 1560', tel:'099 909 090', catId:'familiar', p:{estado:'pendiente'}},
+    {id:10,nombre:'Carmen Rossi',     dir:'Uruguay 1801',       tel:'091 565 656', catId:'familiar', p:{estado:'pendiente'}}
+  ]
+};
+
+var LS_KEY='vetnorte_demo_v2';
+var state;
+function load(){ try{var r=localStorage.getItem(LS_KEY); if(r) return JSON.parse(r);}catch(e){} return JSON.parse(JSON.stringify(SEED)); }
+function save(){ try{localStorage.setItem(LS_KEY, JSON.stringify(state));}catch(e){} }
+state = load();
+
+function money(n){ return '$'+Math.round(n).toLocaleString('es-UY'); }
+function montoDe(s){ return cat(s.catId).monto; }
+function fmtFecha(iso){ if(!iso) return ''; var d=new Date(iso+'T00:00'); return d.toLocaleDateString('es-UY',{day:'numeric',month:'short',year:'numeric'}); }
+function esc(t){ return (t==null?'':String(t)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function ini(nombre){ var p=nombre.trim().split(/\s+/); return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase(); }
+
+var tab='socios';
+function setTab(t){
+  tab=t;
+  document.getElementById('tab-socios').setAttribute('aria-selected', t==='socios');
+  document.getElementById('tab-cobranza').setAttribute('aria-selected', t==='cobranza');
+  document.getElementById('view-socios').hidden = t!=='socios';
+  document.getElementById('view-cobranza').hidden = t!=='cobranza';
+}
+
+function accionesSocio(s){
+  var e=s.p.estado;
+  if(e==='pendiente') return '<span class="pill sin">Sin emitir</span>'+
+    '<div class="actions"><button class="mini solid" onclick="emitir('+s.id+')">Emitir recibo</button></div>';
+  if(e==='emitido') return '<span class="pill calle">Con el cobrador</span>'+
+    '<div class="actions"><button class="mini" onclick="verRecibo('+s.id+')">Ver recibo</button>'+
+    '<button class="mini solid" onclick="acreditar('+s.id+')">Dar de baja</button></div>';
+  return '<span class="pill ok">✓ Pagó '+fmtFecha(s.p.acred)+'</span>'+
+    '<div class="actions"><button class="mini" onclick="verRecibo('+s.id+')">Ver recibo</button></div>';
+}
+
+function render(){
+  document.getElementById('mesLabel').textContent = MES_LABEL;
+  var socios=state.socios;
+  var sin=socios.filter(function(s){return s.p.estado==='pendiente'}).length;
+  var calle=socios.filter(function(s){return s.p.estado==='emitido'}).length;
+  var recaudado=socios.filter(function(s){return s.p.estado==='acreditado'}).reduce(function(a,s){return a+montoDe(s)},0);
+
+  document.getElementById('tSocios').textContent=socios.length;
+  document.getElementById('tSin').textContent=sin;
+  document.getElementById('tCalle').textContent=calle;
+  document.getElementById('tRecaudado').textContent=money(recaudado);
+  document.getElementById('cobranzaCount').textContent=sin+calle;
+
+  document.getElementById('listSocios').innerHTML = socios.map(function(s){
+    var c=cat(s.catId);
+    return '<div class="card"><div class="num">'+esc(ini(s.nombre))+'</div>'+
+      '<div class="who"><div class="name">'+esc(s.nombre)+'</div>'+
+      '<div class="meta"><span class="cat-chip">'+esc(c.nombre)+'</span><span class="dot"></span>'+esc(s.dir)+'</div></div>'+
+      '<div class="right"><div class="amount tnum">'+money(c.monto)+'</div>'+accionesSocio(s)+'</div></div>';
+  }).join('');
+
+  /* Ruta: zona de preparación + lista de lo que NO está acreditado */
+  var prep=document.getElementById('prepZone');
+  if(sin>0){
+    prep.innerHTML='<div class="prep"><div class="t"><b>'+sin+' recibo(s) sin emitir</b>'+
+      'Emitilos por duplicado para que el cobrador salga a domicilio.</div>'+
+      '<button class="btn btn-primary" onclick="emitirTodos()">Emitir recibos pendientes</button></div>';
+  } else { prep.innerHTML=''; }
+
+  var activos=socios.filter(function(s){return s.p.estado!=='acreditado'});
+  var lc=document.getElementById('listCobranza');
+  if(activos.length===0){
+    lc.innerHTML='<div class="empty"><div class="big">¡Todo acreditado! 🐾</div>Todos los pagos del mes están registrados.</div>';
+  } else {
+    lc.innerHTML=activos.map(function(s){
+      var c=cat(s.catId);
+      return '<div class="card"><div class="num">'+esc(ini(s.nombre))+'</div>'+
+        '<div class="who"><div class="name">'+esc(s.nombre)+'</div>'+
+        '<div class="meta">'+esc(s.dir)+'<span class="dot"></span>'+esc(s.tel)+'</div></div>'+
+        '<div class="right"><div class="amount tnum">'+money(c.monto)+'</div>'+accionesSocio(s)+'</div></div>';
+    }).join('');
+  }
+  save();
+}
+
+function emitir(id){
+  var s=state.socios.find(function(x){return x.id===id}); if(!s||s.p.estado!=='pendiente') return;
+  s.p={estado:'emitido', nro:state.reciboSeq++, emit:HOY};
+  render(); verRecibo(id);
+}
+function emitirTodos(){
+  state.socios.forEach(function(s){ if(s.p.estado==='pendiente'){ s.p={estado:'emitido', nro:state.reciboSeq++, emit:HOY}; } });
+  render();
+}
+function acreditar(id){
+  var s=state.socios.find(function(x){return x.id===id}); if(!s||s.p.estado!=='emitido') return;
+  s.p.estado='acreditado'; s.p.acred=HOY;
+  render();
+}
+
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+function overlayClick(e){ if(e.target===e.currentTarget) closeModal(); }
+function imprimir(){ window.print(); }
+
+function reciboDoc(s, copiaTag){
+  var c=cat(s.catId);
+  return '<div>'+ (copiaTag?'<div class="copia-tag">'+copiaTag+'</div>':'') +
+    '<div class="recibo-doc">'+
+      '<div class="recibo-top"><div><div class="rt-brand">Veterinaria del Norte</div>'+
+        '<div class="rt-sub">Cuota social · Paysandú</div></div>'+
+        '<div><div class="rt-tag">Recibo N.º</div><div class="rt-nro tnum">'+String(s.p.nro).padStart(6,'0')+'</div></div></div>'+
+      '<div class="recibo-body">'+
+        '<div class="rb-row"><span class="k">Fecha</span><span class="v">'+fmtFecha(s.p.emit)+'</span></div>'+
+        '<div class="rb-row"><span class="k">Socio</span><span class="v">'+esc(s.nombre)+'</span></div>'+
+        '<div class="rb-row"><span class="k">Domicilio</span><span class="v">'+esc(s.dir)+'</span></div>'+
+        '<div class="rb-row"><span class="k">Concepto</span><span class="v">Cuota '+esc(MES_LABEL)+'<br>'+esc(c.nombre)+'</span></div>'+
+        '<div class="rb-total"><span class="k">Total a abonar</span><span class="v tnum">'+money(c.monto)+'</span></div>'+
+        '<div class="rb-firma"><div class="line">Firma cobrador</div><div class="line">Recibí conforme</div></div>'+
+      '</div>'+
+      '<div class="recibo-foot">Gracias por ser parte de Veterinaria del Norte</div>'+
+    '</div></div>';
+}
+function verRecibo(id){
+  var s=state.socios.find(function(x){return x.id===id}); if(!s||s.p.estado==='pendiente') return;
+  var html='<div class="overlay" onclick="overlayClick(event)"><div class="modal"><div class="recibo">'+
+    '<div class="recibo-note">Se imprime por duplicado: el <b>original</b> queda para el socio y la <b>copia</b> vuelve para darle de baja al pago.</div>'+
+    '<div class="copias">'+ reciboDoc(s,'Original — para el socio') + reciboDoc(s,'Copia — para dar de baja') +'</div>'+
+    '<div class="recibo-actions">'+
+      '<button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>'+
+      '<button class="btn btn-primary" onclick="imprimir()">Imprimir</button>'+
+    '</div></div></div></div>';
+  document.getElementById('modalRoot').innerHTML=html;
+}
+
+function openNuevo(){
+  var opts=CATEGORIAS.map(function(c){return '<option value="'+c.id+'">'+esc(c.nombre)+' — '+money(c.monto)+'</option>';}).join('');
+  var html='<div class="overlay" onclick="overlayClick(event)"><div class="modal">'+
+    '<div class="modal-head"><h3>Nuevo socio</h3><button class="x" onclick="closeModal()" aria-label="Cerrar">✕</button></div>'+
+    '<form onsubmit="guardarNuevo(event)">'+
+      '<label><span>Nombre y apellido</span><input id="n-nombre" required placeholder="Ej: Juan Pérez"></label>'+
+      '<label><span>Domicilio</span><input id="n-dir" required placeholder="Ej: 18 de Julio 1234"></label>'+
+      '<div class="row2"><label><span>Teléfono</span><input id="n-tel" placeholder="099 000 000"></label>'+
+      '<label><span>Tipo de cuota</span><select id="n-cat">'+opts+'</select></label></div>'+
+      '<button class="btn btn-primary" type="submit" style="justify-content:center;margin-top:2px">Agregar socio</button>'+
+    '</form></div></div>';
+  document.getElementById('modalRoot').innerHTML=html;
+  setTimeout(function(){var el=document.getElementById('n-nombre'); if(el) el.focus();},40);
+}
+function guardarNuevo(e){
+  e.preventDefault();
+  var nombre=document.getElementById('n-nombre').value.trim();
+  var dir=document.getElementById('n-dir').value.trim();
+  var tel=document.getElementById('n-tel').value.trim();
+  var catId=document.getElementById('n-cat').value;
+  if(!nombre||!dir) return;
+  var id=state.socios.reduce(function(m,s){return Math.max(m,s.id)},0)+1;
+  state.socios.push({id:id,nombre:nombre,dir:dir,tel:tel||'—',catId:catId,p:{estado:'pendiente'}});
+  closeModal(); setTab('socios'); render();
+}
+
+setTab('socios');
+render();
+</script>
+</body>
+</html>
